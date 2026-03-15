@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- ========================================================================== AI PROMPT GENERATOR - HTML DOCUMENT STRUCTURE ========================================================================== This file contains a complete web application for generating AI prompts for text, image, and video generation. The structure includes: 1. HEAD section: Meta tags, title, CSS styles (light/dark themes) 2. BODY section: Main container with various interactive components - Header with title and theme toggle - Tab system for different prompt types (text/image/video) - Form sections for each prompt type - Generated prompt display area - Information sections (features, how it works, etc.) - Technical reference sections (AI techniques tables) - Footer with additional information The application uses Tailwind CSS for styling with custom CSS variables for theming and responsive design. ========================================================================== -->
+<head>
+ <!-- Meta tags for character encoding and responsive viewport -->
+ <meta charset="utf-8"/>
+ <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+ <title>
+  AI Prompt Generator
+ </title>
+ <!-- External CSS libraries: Tailwind CSS, Font Awesome, and Google Fonts -->
+ <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+ <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Outfit:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+ <!-- ========================================================================== MAIN CSS STYLES - THEME VARIABLES AND CORE STYLING ========================================================================== This section defines CSS variables for light and dark themes, including: - Background colors (primary/secondary) - Text colors (primary/secondary) - Accent colors and gradients - Border colors and box shadows - Input styling and focus states - Table styling and scrollbar customization The CSS uses a [data-theme="dark"] selector to toggle between themes. ========================================================================== -->
+ <style>
+  :root { /* Light theme variables - Enhanced color scheme */ --bg-primary: #f8f9fc; --bg-secondary: #ffffff; --text-primary: hsl(218, 23%, 23%); --text-secondary: #4a5568; --accent-primary: #4361ee; --accent-secondary: #3a0ca3; --accent-gradient: linear-gradient(135deg, #4361ee, #7209b7); --border-color: #e2e8f0; --input-bg: #ffffff; --card-bg: #ffffff; --table-header-bg: #f0f4f8; --table-row-hover: #f7fafc; --table-border: #e2e8f0; --card-hover: #f0f7ff; --slider-bg: #cbd5e0; --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); --scrollbar-thumb: #cbd5e0; --scrollbar-track: #f1f5f9; --success-color: #10b981; --error-color: #ef4444; --warning-color: #f59e0b; --info-color: #3b82f6; --focus-ring: 0 0 0 3px rgba(66, 153, 225, 0.5); --result-border: linear-gradient(135deg, #4361ee, #7209b7); } [data-theme="dark"] { /* Dark theme variables - Applied when [data-theme="dark"] is set */ --bg-primary: #0f172a; --bg-secondary: #1e293b; --text-primary: #f1f5f9; --text-secondary: #cbd5e0; --accent-primary: #4cc9f0; --accent-secondary: #7209b7; --accent-gradient: linear-gradient(135deg, #4cc9f0, #7209b7); --border-color: #334155; --input-bg: #1e293b; --card-bg: #1e293b; --table-header-bg: #334155; --table-row-hover: #334155; --table-border: #475569; --card-hover: #334155; --slider-bg: #475569; --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3); --scrollbar-thumb: #475569; --scrollbar-track: #1e293b; --success-color: #10b981; --error-color: #ef4444; --warning-color: #f59e0b; --info-color: #3b82f6; --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.5); --result-border: linear-gradient(135deg, #4cc9f0, #7209b7); } /* Body styling - Sets base font, colors, and transitions */ body { font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--text-primary); background-color: var(--bg-primary); transition: all 0.3s ease; line-height: 1.6; font-size: 1rem; letter-spacing: 0.02em; } /* Typography - Heading styles for consistent hierarchy */ h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', 'Inter', 'Segoe UI', sans-serif; color: var(--text-primary); font-weight: 600; line-height: 1.3; margin-bottom: 0.75rem; } /* Scrollbar styling - Custom scrollbars for better UX */ ::-webkit-scrollbar { width: 10px; height: 10px; } ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 5px; } ::-webkit-scrollbar-track { background: var(--scrollbar-track); } /* Table styling - Base styles for data tables */ .ai-techniques-table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; border: 1px solid var(--table-border); display: table; transition: all 0.3s ease; } .overview h2 { -webkit-user-select: none; user-select: none; position: relative; padding-right: 2rem; } .overview h2 .arrow { position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); } .overview h2:hover { color: var(--accent-primary); } .ai-techniques-table th, .ai-techniques-table td { padding: 0.75rem; text-align: left; border: 1px solid var(--table-border); vertical-align: top; line-height: 1.5; } .ai-techniques-table th { background-color: var(--table-header-bg); font-weight: 600; } .ai-techniques-table tr:hover { background-color: var(--table-row-hover); } /* Ensure content doesn't overflow and breaks properly */ .ai-techniques-table td { word-wrap: break-word; overflow-wrap: break-word; max-width: 100%; } /* Theme toggle styling - Enhanced visibility for light/dark mode switch */ .theme-toggle { position: relative; width: 4.5rem; height: 2.25rem; border-radius: 2rem; background: linear-gradient(to right, #f9d423, #f83600); border: 2px solid var(--border-color); cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: space-between; padding: 0.25rem 0.5rem; box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.1); } [data-theme="dark"] .theme-toggle { background: linear-gradient(to right, #141e30, #243b55); } .theme-toggle::after { content: ''; position: absolute; width: 1.75rem; height: 1.75rem; border-radius: 50%; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); left: 0.25rem; transform: translateX(0); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease; z-index: 1; } [data-theme="dark"] .theme-toggle::after { transform: translateX(2.25rem); background-color: #c0c0c0; } .theme-toggle .sun-icon, .theme-toggle .moon-icon { position: relative; font-size: 1.125rem; z-index: 2; transition: color 0.3s ease, transform 0.3s ease; } .theme-toggle .sun-icon { color: #ff9800; /* Orange/yellow for sun */ transform: rotate(0deg); } .theme-toggle .moon-icon { color: #5c6bc0; /* Indigo/blue for moon */ transform: rotate(0deg); } /* Animation for icons */ [data-theme="dark"] .theme-toggle .sun-icon { color: rgba(255, 152, 0, 0.5); /* Dimmed sun in dark mode */ transform: rotate(-45deg); } [data-theme="dark"] .theme-toggle .moon-icon { color: #8c9eff; /* Brighter moon in dark mode */ transform: rotate(45deg); } /* Cards and Containers - Styling for content boxes */ .bg-container { background-color: var(--bg-secondary); border: 1px solid var(--border-color); box-shadow: var(--box-shadow); transition: all 0.3s ease; border-radius: 0.75rem; } /* Primary form sections with enhanced visual hierarchy */ .primary-section { background-color: var(--bg-secondary); border-radius: 0.75rem; box-shadow: var(--box-shadow); padding: 2rem; margin-bottom: 2rem; border: 1px solid var(--border-color); transition: all 0.3s ease; } /* Secondary form sections with lighter visual weight */ .secondary-section { background-color: var(--bg-primary); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.25rem; border: 1px solid var(--border-color); transition: all 0.3s ease; } /* Form elements - Styling for inputs, selects, textareas and buttons */ input, select, textarea, button { background-color: var(--input-bg); color: var(--text-primary); border-color: var(--border-color); transition: all 0.3s ease; border-radius: 0.5rem; } select[multiple] { overflow-y: auto; min-height: 160px; } select[multiple] option { padding: 8px; margin-bottom: 2px; border-radius: 4px; } select[multiple] option:hover { background-color: rgba(99, 102, 241, 0.1); } select[multiple] option:checked { background-color: rgba(99, 102, 241, 0.2); color: var(--accent-primary); font-weight: 500; } select[multiple]::-webkit-scrollbar { width: 8px; } select[multiple]::-webkit-scrollbar-thumb { background-color: var(--scrollbar-thumb); border-radius: 4px; } select[multiple]::-webkit-scrollbar-track { background-color: var(--scrollbar-track); border-radius: 4px; } input:focus, select:focus, textarea:focus { border-color: var(--accent-primary); outline: none; box-shadow: var(--focus-ring); transform: translateY(-1px); } input:hover, select:hover, textarea:hover { border-color: var(--accent-secondary); transform: translateY(-2px); box-shadow: var(--box-shadow); } input:active, select:active, textarea:active { transform: translateY(0); box-shadow: none; } input[type="radio"], input[type="checkbox"] { accent-color: var(--accent-primary); cursor: pointer; transition: all 0.2s ease; } input[type="radio"]:hover, input[type="checkbox"]:hover { transform: scale(1.1); } input::placeholder, textarea::placeholder { color: var(--text-secondary); opacity: 0.7; } /* Label styling - Consistent styling for form labels */ label { font-weight: 500; margin-bottom: 0.5rem; display: inline-block; transition: all 0.2s ease; } label:hover { color: var(--accent-primary); } /* Form group styling - Spacing and organization for form elements */ .form-group { margin-bottom: 1.5rem; } .tab-active { background: var(--accent-gradient); color: white; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); transform: translateY(-2px); } /* Button styling - Primary action button with gradient and hover effects */ .btn-purple { background: var(--accent-gradient); color: white; transition: all 0.3s; border-radius: 0.5rem; font-weight: 500; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; } .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); } .btn-purple:active { transform: translateY(0); } .btn-purple::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.1); opacity: 0; transition: opacity 0.3s ease; } .btn-purple:hover::after { opacity: 1; } /* Links - Styling for anchor elements */ a { color: var(--accent-primary); transition: color 0.3s ease; } a:hover { color: var(--accent-secondary); } /* Prompt Type Tabs - Styling for tab system to switch between prompt types */ .prompt-type { display: none; } .prompt-type.active { display: block; } /* Range slider - Custom styling for range input elements */ .slider { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 5px; background: var(--slider-bg); outline: none; } .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-primary); cursor: pointer; } .slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-primary); cursor: pointer; } /* Steps timeline - Visual representation of process steps */ .steps-container { position: relative; } .steps-container::before { content: ''; position: absolute; left: 19px; top: 60px; height: calc(100% - 120px); width: 2px; background-color: var(--border-color); } /* AI Reasoning Techniques Table Styles - Styling for the techniques reference tables */ .ai-techniques-container { margin-bottom: 3rem; box-shadow: var(--box-shadow); border-radius: 0.5rem; overflow: hidden; background-color: var(--bg-secondary); border: 1px solid var(--border-color); } .ai-techniques-header { cursor: pointer; padding: 1rem; background: var(--accent-gradient); border-radius: 0.5rem; margin-bottom: 1rem; color: white; transition: all 0.3s ease; -webkit-user-select: none; user-select: none; } .ai-techniques-header:hover { transform: translateY(-2px); box-shadow: var(--box-shadow); } .ai-techniques-header h2 { margin: 0; position: relative; padding-right: 2rem; color: white; } .ai-techniques-header .arrow { position: absolute; right: 0; top: 50%; transform: translateY(-50%); transition: transform 0.3s ease; } [aria-expanded="true"] .arrow { transform: translateY(-50%) rotate(180deg); } .ai-techniques-content { overflow: hidden; transition: all 0.3s ease; opacity: 0; max-height: 0; } .ai-techniques-content[style*="display: block"] { opacity: 1; max-height: 2000px; /* Adjust based on your content */ } @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } } @keyframes slideUp { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } } .ai-techniques-content[style*="display: block"] { animation: slideDown 0.3s ease forwards; } .ai-techniques-content[style*="display: none"] { animation: slideUp 0.3s ease forwards; } .ai-techniques-table { border-collapse: collapse; width: 100%; margin: 1rem 0; border: 1px solid var(--table-border); background: var(--bg-secondary); transition: all 0.3s ease; } .ai-techniques-container.expanded .ai-techniques-toggle { transform: rotate(180deg); } .ai-techniques-container.expanded .ai-techniques-content { display: block; } /* Improved Table Styles for Better Responsiveness */ .ai-techniques-table-wrapper { width: 100%; max-width: 100%; overflow-x: visible; padding: 1rem; } .ai-techniques-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: auto; } .ai-techniques-table th, .ai-techniques-table td { padding: 0.85rem 1rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; line-height: 1.5; white-space: normal; color: var(--text-primary); /* Ensure text direction is horizontal */ writing-mode: horizontal-tb; } /* Fix for all table header columns to ensure horizontal text */ .ai-techniques-table th, .ai-techniques-table td { writing-mode: horizontal-tb !important; text-orientation: mixed !important; white-space: normal !important; vertical-align: top !important; text-align: left !important; direction: ltr !important; } /* Set minimum width for all columns */ .ai-techniques-table th { min-width: 120px; } /* Specific width for References/Notes column */ .ai-techniques-table th:last-child, .ai-techniques-table td:last-child { min-width: 150px; } .ai-techniques-table th { background-color: var(--table-header-bg); font-weight: 600; position: sticky; top: 0; z-index: 10; color: var(--text-primary); border-bottom: 2px solid var(--border-color); } .ai-techniques-table tr:hover { background-color: var(--table-row-hover); } /* Screen reader only text - Accessibility helper for screen readers */ .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; } /* Enhanced Card Styles for Mobile with Accessibility - Mobile-friendly cards */ .ai-techniques-card { display: none; border: 1px solid var(--border-color); border-radius: 0.5rem; margin-bottom: 1.25rem; overflow: hidden; box-shadow: var(--box-shadow); background-color: var(--bg-secondary); transition: transform 0.2s ease, box-shadow 0.2s ease; } .ai-techniques-card:hover { transform: translateY(-2px); box-shadow: var(--box-shadow); } .ai-techniques-card-header { padding: 1.25rem; background-color: var(--table-header-bg); font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); transition: background-color 0.2s ease; color: var(--text-primary); } .ai-techniques-card-header:hover { background-color: var(--card-hover); } .ai-techniques-card-header:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 2px; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3); } .ai-techniques-card-content { padding: 0; max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s cubic-bezier(0.16, 1, 0.3, 1); background-color: var(--bg-secondary); } .ai-techniques-card.expanded .ai-techniques-card-content { padding: 1.5rem; max-height: 5000px; } .ai-techniques-card-toggle { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); color: var(--text-secondary); width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; } .ai-techniques-card.expanded .ai-techniques-card-toggle { transform: rotate(180deg); color: var(--accent-primary); } .ai-techniques-card-row { margin-bottom: 1rem; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; line-height: 1.5; padding: 1rem; background-color: var(--card-bg); border-radius: 0.375rem; box-shadow: var(--box-shadow); color: var(--text-primary); } .ai-techniques-card-row:last-child { margin-bottom: 0; } .ai-techniques-card-row strong { display: block; margin-bottom: 0.375rem; font-weight: 600; color: var(--text-secondary); } /* Fix for References/Notes in mobile cards */ .ai-techniques-card-row:last-of-type strong, .ai-techniques-card-row:last-of-type p { writing-mode: horizontal-tb !important; text-orientation: mixed !important; white-space: normal !important; vertical-align: top !important; text-align: left !important; direction: ltr !important; } /* Generated prompt result card styling - Special styling for the output area */ .result-card { background-color: var(--bg-secondary); border-radius: 0.75rem; padding: 1.5rem; margin: 1.5rem 0; position: relative; box-shadow: var(--box-shadow); border: 1px solid transparent; background-image: var(--result-border); background-origin: border-box; background-clip: padding-box, border-box; transition: all 0.3s ease; } .result-card::before { content: 'Generated Prompt'; position: absolute; top: -0.75rem; left: 1rem; background: var(--accent-gradient); padding: 0.25rem 1rem; border-radius: 1rem; font-size: 0.75rem; color: white; font-weight: 600; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); } .result-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); } #generatedPrompt { min-height: 150px; max-height: 500px; padding: 1rem; background-color: var(--bg-primary); border-radius: 0.5rem; border: 1px solid var(--border-color); margin-bottom: 1rem; font-family: 'Inter', monospace; white-space: pre-wrap; line-height: 1.6; overflow-y: auto; overflow-x: hidden; word-wrap: break-word; } /* Focus states for keyboard navigation - Accessibility enhancement */ .ai-techniques-table th:focus-visible, .ai-techniques-table td:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: -2px; z-index: 20; position: relative; } /* Status indicator for screen readers - Accessibility enhancement */ .expansion-status { font-size: 0.875rem; color: rgba(255, 255, 255, 0.8); margin-left: 0.75rem; } /* Responsive styles for tables and cards - Media queries for different screen sizes */ @media (max-width: 1200px) { .ai-techniques-table th, .ai-techniques-table td { font-size: 0.85rem; padding: 0.75rem 0.5rem; } /* Ensure text wraps properly on smaller screens */ .ai-techniques-table td { word-break: normal; overflow-wrap: break-word; } } @media (max-width: 1023px) { .ai-techniques-table-wrapper { display: none; } .ai-techniques-card { display: block; } /* Ensure proper spacing in mobile cards */ .ai-techniques-card-content { background-color: var(--bg-secondary); } .ai-techniques-card-row { background-color: var(--card-bg); padding: 1rem; border-radius: 0.375rem; margin-bottom: 0.75rem; box-shadow: var(--box-shadow); } .ai-techniques-card-row p { white-space: normal; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; line-height: 1.5; } } @media (min-width: 1024px) { /* --- General Table Column Widths (for other tables) --- */ .ai-techniques-table th:not(#ai-prompt-engineering-section *), .ai-techniques-table td:not(#ai-prompt-engineering-section *) { /* Apply default widths only if NOT inside prompt engineering section */ font-size: 0.875rem; padding: 1rem 0.75rem; } .ai-techniques-table th:not(#ai-prompt-engineering-section *) { position: sticky; top: 0; background-color: var(--table-header-bg); z-index: 10; } /* Default widths for tables other than Prompt Engineering */ .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) th:nth-child(1), .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) td:nth-child(1) { width: 16.67%; /* 1/6 */ } .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) th:nth-child(2), .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) td:nth-child(2) { width: 33.33%; /* 1/3 */ } .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) th:nth-child(3), .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) td:nth-child(3) { width: 25%; /* 1/4 */ } .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) th:nth-child(4), .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) td:nth-child(4) { width: 25%; /* 1/4 */ } /* ... other default widths ... */ .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) th:nth-child(8), .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) td:nth-child(8) { width: 15%; } .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) th:nth-child(9), .ai-techniques-table:not(#ai-prompt-engineering-section .ai-techniques-table) td:nth-child(9) { width: 14%; writing-mode: horizontal-tb !important; text-orientation: mixed !important; } /* --- Specific Column MIN-WIDTHS for AI Prompt Engineering Table --- */ #ai-prompt-engineering-section .ai-techniques-table { table-layout: fixed; /* Use fixed layout */ width: 100%; /* Ensure table takes full width */ } #ai-prompt-engineering-section .ai-techniques-table th, #ai-prompt-engineering-section .ai-techniques-table td { font-size: 0.875rem; padding: 1rem 0.75rem; vertical-align: top; word-wrap: break-word; /* Ensure long words wrap */ overflow-wrap: break-word; } #ai-prompt-engineering-section .ai-techniques-table th { position: sticky; top: 0; background-color: var(--table-header-bg); z-index: 10; } /* Apply percentage widths with fixed layout */ #ai-prompt-engineering-section .ai-techniques-table th:nth-child(1), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(1) { width: 12%; } #ai-prompt-engineering-section .ai-techniques-table th:nth-child(2), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(2) { width: 10%; } #ai-prompt-engineering-section .ai-techniques-table th:nth-child(3), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(3) { width: 18%; } #ai-prompt-engineering-section .ai-techniques-table th:nth-child(4), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(4) { width: 15%; } #ai-prompt-engineering-section .ai-techniques-table th:nth-child(5), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(5) { width: 10%; } #ai-prompt-engineering-section .ai-techniques-table th:nth-child(6), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(6) { width: 10%; } #ai-prompt-engineering-section .ai-techniques-table th:nth-child(7), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(7) { width: 7%; } #ai-prompt-engineering-section .ai-techniques-table th:nth-child(8), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(8) { width: 10%; } #ai-prompt-engineering-section .ai-techniques-table th:nth-child(9), #ai-prompt-engineering-section .ai-techniques-table td:nth-child(9) { width: 8%; writing-mode: horizontal-tb !important; text-orientation: mixed !important; } } /* Responsive design for different devices */ @media (max-width: 767px) { .container { padding: 1rem; } h1.text-4xl { font-size: 1.75rem; } h2.text-3xl { font-size: 1.5rem; } h3.text-xl { font-size: 1.25rem; } .grid-cols-3 { grid-template-columns: 1fr; } .flex.justify-between { flex-direction: column; align-items: center; gap: 1.5rem; } .flex.space-x-4 { margin-top: 1.5rem; } .steps-container::before { left: 15px; } .steps-container .flex { align-items: flex-start; } .steps-container .h-10 { height: 30px; width: 30px; min-width: 30px; } .header-container { flex-direction: column; align-items: flex-start; gap: 1.5rem; } .social-theme-container { width: 100%; display: flex; justify-content: space-between; align-items: center; } /* Improved mobile form elements */ input, select, textarea { font-size: 16px; /* Prevents iOS zoom on focus */ padding: 0.875rem; border-radius: 0.5rem; margin-bottom: 0.5rem; } /* Better spacing for mobile forms */ .space-y-4>div { margin-bottom: 1.5rem; } /* Improved mobile buttons */ button { min-height: 44px; /* Better touch targets */ padding: 0.75rem 1rem; } /* Fix for the generated prompt section */ #generatedPrompt { min-height: 150px; padding: 1rem; } /* Better mobile spacing for the copy/save buttons */ .flex.space-x-2 { gap: 0.75rem; flex-wrap: wrap; } /* Improved form layout on mobile */ .primary-section, .secondary-section { padding: 1.25rem; margin-bottom: 1.5rem; } /* Improved radio button and checkbox spacing */ label.inline-flex { margin-bottom: 0.75rem; padding: 0.5rem; border-radius: 0.375rem; background-color: var(--bg-secondary); border: 1px solid var(--border-color); transition: all 0.2s ease; } label.inline-flex:hover { background-color: var(--card-hover); } } @media (min-width: 768px) and (max-width: 1023px) { .grid-cols-3 { grid-template-columns: 1fr 1fr; } .header-container { align-items: center; } } /* Additional responsive improvements */ .tab-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.5rem; } @media (max-width: 767px) { .tab-container { flex-direction: column; width: 100%; } .tab-container button { width: 100%; margin: 0.25rem 0; } } /* Footer responsive */ @media (max-width: 767px) { .footer-grid { grid-template-columns: 1fr; } } /* Visual feedback and micro-interactions */ .interactive-element { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); } .interactive-element:hover { transform: translateY(-2px); } .interactive-element:active { transform: translateY(0); } /* Input focus animation */ @keyframes focusPulse { 0% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(67, 97, 238, 0); } 100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); } } input:focus, select:focus, textarea:focus { animation: focusPulse 1.5s ease-in-out 1; } /* Button click effect */ @keyframes buttonClick { 0% { transform: scale(1); } 50% { transform: scale(0.97); } 100% { transform: scale(1); } } button:active { animation: buttonClick 0.3s ease-in-out 1; } /* Success animation */ @keyframes successPulse { 0% { background-color: var(--success-color); } 100% { background-color: var(--accent-primary); } } .success-animation { animation: successPulse 1s ease-in-out; } /* Tab transition */ .tab-container button { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; } .tab-container button::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-gradient); transition: all 0.3s ease; transform: translateX(-50%); } .tab-container button:hover::after { width: 80%; } .tab-container button.tab-active::after { width: 90%; } /* Override other bright cyan elements in dark mode */ [data-theme="dark"] .bg-container .grid .p-6 .text-4xl { color: var(--info-color); } [data-theme="dark"] .steps-container .h-10 { background-color: var(--info-color); } [data-theme="dark"] .bg-container .grid .p-6 .fa-dot-circle { color: var(--info-color); } [data-theme="dark"] .bg-container .grid .p-6 .fa-check { color: var(--info-color) !important; /* Use !important to override inline style */ } [data-theme="dark"] #technique-guide-modal .text-center button { /* Override inline style */ background-color: var(--info-color) !important; } [data-theme="dark"] #technique-guide-modal .text-center button:hover { background-color: #2563eb !important; } /* Override Call to Action section colors in dark mode */ [data-theme="dark"] .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white { background-color: var(--info-color) !important; /* Override inline style for background */ } /* Override the header and paragraph text color within the CTA for dark mode */ [data-theme="dark"] .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white h2, [data-theme="dark"] .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white p { color: var(--text-primary) !important; /* Use standard dark theme text color */ } [data-theme="dark"] .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white button { color: var(--info-color) !important; /* Override inline style for button text */ } /* Rating System Styles */ .rating-stars { display: flex; gap: 0.25rem; /* space between stars */ color: #f59e0b; /* Use warning color (yellow/orange) for stars */ font-size: 1.5rem; /* Make stars larger */ } .rating-star { cursor: pointer; transition: color 0.2s ease; } .rating-star.interactive:hover, .rating-star.interactive.hovered { color: #f59e0b; /* Keep color on hover */ transform: scale(1.1); } .rating-star.filled { color: #f59e0b; /* Filled star color */ } .rating-star.empty { color: var(--text-secondary); /* Empty star color - use secondary text color */ opacity: 0.6; } /* Style when rating is disabled */ .rating-stars.rated .rating-star { cursor: default; } .rating-message { margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-secondary); min-height: 1.25rem; /* Prevent layout shift */ } /* ... existing styles ... */ /* Override Call to Action section colors */ /* Ensure text is white in light mode */ .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white h2, .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white p { color: white !important; /* Override base styles in light mode */ } /* Dark mode overrides (keep these) */ [data-theme="dark"] .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white { background-color: var(--info-color) !important; } [data-theme="dark"] .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white h2, [data-theme="dark"] .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white p { color: var(--text-primary) !important; /* Use standard dark theme text color */ } [data-theme="dark"] .rounded-lg.shadow-md.p-8.mb-12.text-center.text-white button { color: var(--info-color) !important; } /* ... rest of existing styles ... */ /* Style for PRE block within the new Meta-Prompt Guidelines section */ .cta-section pre { background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent light background for light mode */ border-color: rgba(255, 255, 255, 0.3); color: white; /* Ensure text is readable */ overflow-x: auto; /* Allow horizontal scrolling if needed */ } [data-theme="dark"] .cta-section pre { background-color: rgba(0, 0, 0, 0.25); /* Darker semi-transparent background for dark mode */ border-color: rgba(255, 255, 255, 0.2); color: var(--text-primary); /* Use primary dark mode text color */ } .cta-section pre code { color: inherit; /* Inherit color from pre */ } /* Specific Dark Mode styles for the Original Prompt block */ [data-theme="dark"] #original-prompt-block { background-color: #374151; /* Tailwind gray-700 */ color: #ffffff; /* White text */ border-color: #4b5563; /* Tailwind gray-600 */ } [data-theme="dark"] #original-prompt-block code { background-color: transparent; /* Ensure code doesn't have its own bg */ color: inherit; /* Inherit text color from pre */ }
+ </style>
+ <!-- ========================================================================== ADDITIONAL STYLES FOR NEW FEATURES ========================================================================== This section contains styles for newer features added to the application: - Contextual help system with tooltips - Prompt structure visualization - Example gallery for prompt templates ========================================================================== -->
+ <style>
+  /* Contextual help system - Tooltips that appear on hover */ .help-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-gradient); color: white; font-size: 12px; margin-left: 8px; cursor: pointer; transition: all 0.3s ease; position: relative; } .help-icon:hover { transform: scale(1.1); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); } .help-tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background-color: var(--bg-secondary); color: var(--text-primary); padding: 0.75rem 1rem; border-radius: 0.5rem; box-shadow: var(--box-shadow); width: 250px; z-index: 100; opacity: 0; visibility: hidden; transition: all 0.3s ease; border: 1px solid var(--border-color); font-weight: normal; font-size: 0.875rem; text-align: left; } .help-icon:hover .help-tooltip { opacity: 1; visibility: visible; bottom: calc(100% + 10px); } .help-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border-width: 8px; border-style: solid; border-color: var(--border-color) transparent transparent transparent; } /* Prompt structure visualization - Visual representation of prompt components */ .prompt-structure-visualizer { margin: 1.5rem 0; padding: 1rem; border-radius: 0.5rem; background-color: var(--bg-secondary); border: 1px solid var(--border-color); } .prompt-component { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 0.375rem; position: relative; } .prompt-component-role { background-color: rgba(79, 70, 229, 0.1); border-left: 3px solid var(--accent-primary); } .prompt-component-task { background-color: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; } .prompt-component-content { background-color: rgba(16, 185, 129, 0.1); border-left: 3px solid #10b981; } .prompt-component-format { background-color: rgba(59, 130, 246, 0.1); border-left: 3px solid #3b82f6; } .prompt-component-label { position: absolute; top: -0.5rem; left: 0.5rem; font-size: 0.75rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 0.25rem; background-color: var(--bg-secondary); } /* Example gallery - Grid layout for prompt examples */ .example-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0; } .example-card { background-color: var(--bg-secondary); border-radius: 0.5rem; padding: 1rem; border: 1px solid var(--border-color); transition: all 0.3s ease; cursor: pointer; } .example-card:hover { transform: translateY(-2px); box-shadow: var(--box-shadow); border-color: var(--accent-primary); } .example-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; } .example-card p { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem; } .example-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.5rem; } .example-tag { font-size: 0.75rem; padding: 0.125rem 0.375rem; border-radius: 0.25rem; background-color: var(--bg-primary); color: var(--text-secondary); }
+ </style>
+ <!-- ========================================================================== EMOJI TOGGLE STYLES ========================================================================== Styles for the emoji toggle feature that allows switching between text and emoji modes in the generated prompts. ========================================================================== -->
+ <style>
+  /* Emoji Toggle Styles */ .emoji-toggle-wrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding: 0.5rem; border-radius: 0.5rem; background: rgba(0, 0, 0, 0.03); } .emoji-toggle-container { position: relative; width: 3.5rem; height: 2rem; } .emoji-toggle-track { position: absolute; width: 100%; height: 100%; background: #ef4444; border-radius: 1rem; transition: all 0.3s ease; cursor: pointer; overflow: hidden; } .emoji-toggle-track::before { content: "Aa"; position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); color: rgba(255, 255, 255, 0.8); font-size: 0.75rem; font-weight: bold; opacity: 1; transition: all 0.3s ease; } .emoji-toggle-track::after { content: "😊"; position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); font-size: 0.75rem; opacity: 0; transition: all 0.3s ease; } .emoji-toggle-thumb { position: absolute; left: 0.25rem; top: 50%; transform: translateY(-50%); width: 1.5rem; height: 1.5rem; background: white; border-radius: 50%; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); } /* Active States */ .emoji-toggle-container.active .emoji-toggle-track { background: #22c55e; } .emoji-toggle-container.active .emoji-toggle-thumb { left: calc(100% - 1.75rem); } .emoji-toggle-container.active .emoji-toggle-track::before { opacity: 0; } .emoji-toggle-container.active .emoji-toggle-track::after { opacity: 1; } /* Hover Effects */ .emoji-toggle-track:hover { filter: brightness(1.1); } /* Focus States */ .emoji-toggle-input:focus-visible+.emoji-toggle-track { outline: 2px solid #3b82f6; outline-offset: 2px; } /* Status Text */ .emoji-status { font-size: 0.875rem; font-weight: 500; transition: all 0.3s ease; } .emoji-status.active { color: #22c55e; } .emoji-status.inactive { color: #ef4444; } /* Floating Emojis Animation */ @keyframes floatEmoji { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-20px) rotate(360deg); opacity: 0; } } .floating-emoji { position: absolute; pointer-events: none; animation: floatEmoji 1s ease-out forwards; }
+ </style>
+ <!-- ========================================================================== MULTI-SELECT HINT ANIMATION STYLES ========================================================================== Styles for the animation that shows users how to select multiple items in select boxes using keyboard modifiers. ========================================================================== -->
+ <style>
+  /* Multi-select hint animation */ .select-animation { display: flex; gap: 4px; align-items: center; } .select-animation .dot { width: 6px; height: 6px; background-color: var(--accent-primary); border-radius: 50%; animation: pulse 1.5s infinite; } .select-animation .dot:nth-child(2) { animation-delay: 0.2s; } .select-animation .dot:nth-child(3) { animation-delay: 0.4s; } @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 20% { transform: scale(1.2); opacity: 1; } 40%, 100% { transform: scale(0.8); opacity: 0.5; } } .multi-select-hint { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); } /* Enhance kbd appearance */ kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2); }
+ </style>
+ <!-- ========================================================================== ENHANCED MULTI-SELECT HINT ANIMATION STYLES ========================================================================== Improved version of the multi-select hint animation with better visual effects and responsiveness. ========================================================================== -->
+ <style>
+  /* Enhanced Multi-select hint animation */ .select-animation { display: flex; gap: 6px; align-items: center; padding: 0 4px; } .select-animation .dot { width: 5px; height: 5px; background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, #818cf8)); border-radius: 50%; animation: pulseAndMove 2s infinite; } .select-animation .dot:nth-child(2) { animation-delay: 0.3s; } .select-animation .dot:nth-child(3) { animation-delay: 0.6s; } @keyframes pulseAndMove { 0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.5; } 50% { transform: translateY(-4px) scale(1.2); opacity: 1; } } .multi-select-hint { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); max-width: 100%; margin-inline: auto; } /* Enhanced kbd appearance */ kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1); letter-spacing: 0.025em; } /* Responsive adjustments */ @media (max-width: 640px) { .multi-select-hint { padding: 0.875rem; } .multi-select-hint .w-10 { width: 2rem; height: 2rem; } .multi-select-hint .text-sm { font-size: 0.8125rem; } } /* Dark mode enhancements */ .dark .multi-select-hint { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); } .dark kbd { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05); }
+ </style>
+ <style>
+  /* Required field indicator */ .required-field::after { content: '*'; color: var(--accent-primary); margin-left: 4px; } .field-error { color: var(--error-color, #ef4444); font-size: 0.875rem; margin-top: 0.5rem; display: none; } .field-error.visible { display: block; animation: fadeIn 0.3s ease-in-out; } @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } } /* Enhanced form validation visual feedback */ .input-error { border-color: var(--error-color, #ef4444) !important; background-color: var(--error-bg, #fef2f2) !important; } .dark .input-error { background-color: rgba(239, 68, 68, 0.1) !important; } /* Required fields section */ .required-fields-notice { display: flex; align-items: center; gap: 2px; font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; padding: 0.5rem 0.75rem; background: var(--bg-secondary); border-radius: 0.5rem; border: 1px solid var(--border-color); } .required-fields-notice i { color: var(--accent-primary); }
+ </style>
+</head>
+<!-- ============================================================ BODY SECTION - MAIN APPLICATION CONTAINER ============================================================ -->
+<body>
+ <!-- Main container with Tailwind CSS utility classes for spacing and width -->
+ <div class="container mx-auto px-4 py-8 max-w-6xl">
+  <!-- ============================================================ TECHNIQUE GUIDE MODAL - HELP SYSTEM ============================================================ -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden" id="technique-guide-modal">
+   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+    <div class="p-6 border-b border-gray-200 dark:border-gray-700" style="border-color: var(--border-color);">
+     <div class="flex justify-between items-center">
+      <h3 class="text-2xl font-bold">
+       How to Choose the Right Prompting Technique
+      </h3>
+      <button aria-label="Close technique guide" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" onclick="closeTechniqueGuide()">
+       <i class="fas fa-times text-xl">
+       </i>
+      </button>
+     </div>
+    </div>
+    <div class="p-6">
+     <p class="mb-4">
+      Choosing the right prompting technique depends on your specific task and goals. Here's a guide to help you decide:
+     </p>
+     <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">
+       For Beginners (Start Here)
+      </h4>
+      <ul class="list-disc pl-5 space-y-2">
+       <li>
+        <strong>
+         Zero-Shot Prompting
+        </strong>
+        : The simplest approach - just ask directly. Good for straightforward questions.
+       </li>
+       <li>
+        <strong>
+         Few-Shot Prompting
+        </strong>
+        : Provide examples of what you want. Great when you need a specific format or style.
+       </li>
+       <li>
+        <strong>
+         Role/Persona Prompting
+        </strong>
+        : Tell the AI to act as an expert in a field. Useful for specialized knowledge.
+       </li>
+      </ul>
+     </div>
+     <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">
+       Choose by Task Type
+      </h4>
+      <div class="mb-4">
+       <h5 class="text-lg font-medium">
+        For Complex Reasoning &amp; Problem-Solving
+       </h5>
+       <ul class="list-disc pl-5 space-y-1">
+        <li>
+         <strong>
+          Chain-of-Thought
+         </strong>
+         : When you need step-by-step reasoning (math, logic problems)
+        </li>
+        <li>
+         <strong>
+          Tree-of-Thought
+         </strong>
+         : For problems with multiple possible approaches
+        </li>
+        <li>
+         <strong>
+          Least-to-Most
+         </strong>
+         : Breaking complex problems into simpler sub-problems
+        </li>
+       </ul>
+      </div>
+      <div class="mb-4">
+       <h5 class="text-lg font-medium">
+        For Accuracy &amp; Verification
+       </h5>
+       <ul class="list-disc pl-5 space-y-1">
+        <li>
+         <strong>
+          Chain-of-Verification
+         </strong>
+         : When accuracy is critical and you want the AI to verify its work
+        </li>
+        <li>
+         <strong>
+          Chain-of-Evidence
+         </strong>
+         : When you need citations and evidence for claims
+        </li>
+        <li>
+         <strong>
+          Self-Consistency
+         </strong>
+         : For getting the most reliable answer through multiple attempts
+        </li>
+       </ul>
+      </div>
+      <div class="mb-4">
+       <h5 class="text-lg font-medium">
+        For Content Creation &amp; Refinement
+       </h5>
+       <ul class="list-disc pl-5 space-y-1">
+        <li>
+         <strong>
+          Self-Refinement
+         </strong>
+         : For iteratively improving content quality
+        </li>
+        <li>
+         <strong>
+          Document Editing Mode
+         </strong>
+         : When editing or improving existing text
+        </li>
+        <li>
+         <strong>
+          Format Structure
+         </strong>
+         : When you need a specific output format
+        </li>
+       </ul>
+      </div>
+      <div class="mb-4">
+       <h5 class="text-lg font-medium">
+        For Specialized Tasks
+       </h5>
+       <ul class="list-disc pl-5 space-y-1">
+        <li>
+         <strong>
+          Retrieval-Augmented Generation (RAG)
+         </strong>
+         : When you need up-to-date or specialized information
+        </li>
+        <li>
+         <strong>
+          Document Analysis
+         </strong>
+         : For summarizing or analyzing documents
+        </li>
+        <li>
+         <strong>
+          UI Mockup
+         </strong>
+         : For generating interface designs
+        </li>
+       </ul>
+      </div>
+     </div>
+     <div class="mb-6">
+      <h4 class="text-xl font-semibold mb-2">
+       Quick Decision Guide
+      </h4>
+      <p class="mb-2">
+       Ask yourself these questions:
+      </p>
+      <ol class="list-decimal pl-5 space-y-2">
+       <li>
+        Is my task straightforward or complex? (Straightforward → Zero-Shot, Complex → Chain-of-Thought)
+       </li>
+       <li>
+        Do I need step-by-step reasoning? (Yes → Chain-of-Thought or Least-to-Most)
+       </li>
+       <li>
+        Is factual accuracy critical? (Yes → Chain-of-Verification or Chain-of-Evidence)
+       </li>
+       <li>
+        Am I creating or refining content? (Creating → Role/Persona, Refining → Self-Refinement)
+       </li>
+       <li>
+        Do I need a specific format or structure? (Yes → Format Structure Prompting)
+       </li>
+      </ol>
+     </div>
+     <div class="text-center mt-8">
+      <button class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-300" onclick="closeTechniqueGuide()" style="background-color: var(--accent-primary);">
+       Got it!
+      </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <!-- ============================================================ HEADER SECTION - TITLE AND CONTROLS ============================================================ -->
+  <header class="mb-12">
+   <div class="flex justify-between items-center mb-8 header-container">
+    <h1 class="text-4xl font-bold" style="background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+     AI Prompt Generator
+    </h1>
+    <div class="flex space-x-4 items-center social-theme-container">
+     <a aria-label="Visit Thomas Willner LinkedIn Profile" class="text-gray-600 hover:text-indigo-700 interactive-element" href="https://www.linkedin.com/in/thomaswillner/" rel="noopener noreferrer" target="_blank" title="LinkedIn Profile">
+      <i class="fab fa-linkedin-in">
+      </i>
+     </a>
+     <div aria-checked="false" class="theme-toggle ml-4" id="theme-toggle" onclick="toggleTheme()" role="switch" tabindex="0">
+      <span class="sr-only">
+       Toggle theme
+      </span>
+      <i aria-hidden="true" class="fas fa-sun sun-icon">
+      </i>
+      <i aria-hidden="true" class="fas fa-moon moon-icon">
+      </i>
+     </div>
+    </div>
+   </div>
+   <div class="bg-container rounded-lg shadow-md p-6 mb-8 primary-section">
+    <h2 class="text-3xl font-bold text-center mb-4">
+     Free AI Prompt Generator Online
+    </h2>
+    <p class="text-center text-gray-600 dark:text-gray-300">
+     Create effective prompts for text, image, and video generation with AI models
+    </p>
+   </div>
+  </header>
+  <!-- ============================================================ MAIN CONTENT SECTION - PROMPT GENERATOR FORMS ============================================================ -->
+  <main>
+   <!-- PROMPT TYPE SELECTOR -->
+   <div class="primary-section rounded-lg shadow-md p-6 mb-8">
+    <h3 class="text-xl font-semibold mb-4">
+     What kind of AI prompt do you need?
+    </h3>
+    <div class="flex justify-center space-x-4 mb-6 tab-container">
+     <button class="py-3 px-6 font-medium tab-active interactive-element" id="text-tab" onclick="switchTab('text');">
+      Text Generation
+     </button>
+     <button class="py-3 px-6 font-medium interactive-element" id="image-tab" onclick="switchTab('image');">
+      Image Generation
+     </button>
+     <button class="py-3 px-6 font-medium interactive-element" id="video-tab" onclick="switchTab('video');">
+      Video Generation
+     </button>
+    </div>
+    <!-- TEXT GENERATION FORM -->
+    <div class="prompt-type active" id="text-form">
+     <h4 class="text-xl font-semibold mb-4">
+      Text Generation Prompt
+     </h4>
+     <div class="space-y-4">
+      <div class="mb-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+       <p class="text-sm text-gray-600 dark:text-gray-300">
+        💡 Tip: Combining RAG, Tree-of-Thought, and Chain-of-Thought provides a powerful framework for complex tasks requiring research and reasoning.
+       </p>
+      </div>
+      <div>
+       <label class="block mb-2" for="roleInput">
+        Role (optional)
+        <span class="help-icon">
+         i
+         <div class="help-tooltip">
+          Specify who or what the AI should pretend to be (e.g., "Expert data scientist", "Marketing specialist").
+         </div>
+        </span>
+       </label>
+       <div class="flex space-x-2">
+        <select aria-label="Select domain-specific role" class="w-full p-3 border rounded-lg" id="domainRoleSelect" onchange="updateRoleInput()">
+         <option selected="" value="">
+          Select a domain-specific role...
+         </option>
+         <optgroup label="Technical Roles">
+          <option value="Cybersecurity Expert">
+           Cybersecurity Expert
+          </option>
+          <option value="Solution Architect">
+           Solution Architect
+          </option>
+          <option value="Data Scientist">
+           Data Scientist
+          </option>
+          <option value="Cloud Architect">
+           Cloud Architect
+          </option>
+         </optgroup>
+         <optgroup label="Business Roles">
+          <option value="Business Analyst">
+           Business Analyst
+          </option>
+          <option value="Digital Transformation Consultant">
+           Digital Transformation Consultant
+          </option>
+         </optgroup>
+        </select>
+       </div>
+       <div class="mt-2">
+        <input class="w-full p-3 border rounded-lg" id="roleInput" placeholder="Enter a custom role or use selection above" type="text"/>
+       </div>
+      </div>
+      <div>
+       <label class="block mb-2 required-field" for="taskInput">
+        Task
+       </label>
+       <input class="w-full p-3 border rounded-lg" id="taskInput" placeholder="What do you want the AI to do?" required="" type="text"/>
+       <div class="field-error" id="task-error">
+        Please specify the task
+       </div>
+      </div>
+      <div>
+       <label class="block mb-2 required-field" for="topicInput">
+        Topic
+       </label>
+       <input class="w-full p-3 border rounded-lg" id="topicInput" placeholder="What is the subject matter?" required="" type="text"/>
+       <div class="field-error" id="topic-error">
+        Please specify the topic
+       </div>
+      </div>
+      <div>
+       <label class="block mb-2" for="promptingTechnique">
+        Prompting Technique
+        <span class="help-icon">
+         i
+         <div class="help-tooltip">
+          Different techniques help the AI understand how to approach your request. Use Ctrl/Cmd + Click to select multiple.
+         </div>
+        </span>
+       </label>
+       <div class="flex space-x-2">
+        <div class="flex-grow">
+         <select class="w-full p-3 border rounded-lg" id="promptingTechnique" multiple="" size="8">
+          <option disabled="" value="">
+           Select one or more techniques...
+          </option>
+          <optgroup label="Advanced Reasoning">
+           <option title="Asks the AI to break down its reasoning step by step." value="Chain-of-Thought (CoT) Prompting">
+            Chain-of-Thought (CoT) Prompting
+           </option>
+           <option title="Explores multiple reasoning paths simultaneously." value="Tree-of-Thought Prompting">
+            Tree-of-Thought Prompting
+           </option>
+          </optgroup>
+          <optgroup label="Iterative Refinement">
+           <option title="The AI critiques and iteratively refines its own response." value="Self-Refinement Prompting">
+            Self-Refinement Prompting
+           </option>
+           <option title="The AI systematically re-checks each step of its solution for mistakes." value="Reflexion Prompting">
+            Reflexion Prompting
+           </option>
+          </optgroup>
+          <optgroup label="Specialized / Analytical Prompting">
+           <option title="Combines prompt instructions with external data retrieval." value="Retrieval-Augmented Generation">
+            Retrieval-Augmented Generation (RAG)
+           </option>
+           <option title="Instructs the AI to take on the role of a specific expert." value="Expert Prompting">
+            Expert Prompting
+           </option>
+          </optgroup>
+          <optgroup label="Other Techniques">
+           <option title="Directly ask the AI to perform a task without examples." value="Zero-Shot Prompting">
+            Zero-Shot Prompting
+           </option>
+           <option title="Provides a few examples of the desired output." value="Few-Shot Prompting">
+            Few-Shot Prompting
+           </option>
+          </optgroup>
+         </select>
+        </div>
+        <div class="multi-select-hint group flex items-center justify-between mt-3 p-4 bg-gradient-to-r from-blue-50/90 to-blue-50/90 dark:from-blue-900/20 to-blue-900/20 border border-blue-100/50 dark:border-blue-800/50 rounded-xl shadow-sm">
+         <div class="flex items-center gap-3">
+          <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-800 dark:to-indigo-800">
+           <i class="fas fa-keyboard text-blue-600/90 dark:text-blue-300/90">
+           </i>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-blue-700 dark:text-blue-200">
+           <span>
+            Hold
+           </span>
+           <kbd class="px-2.5 py-1.5 bg-white dark:bg-gray-800 rounded-lg border-2 border-blue-100 dark:border-blue-800 font-mono text-xs">
+            Ctrl/Cmd
+           </kbd>
+           <span>
+            to select multiple
+           </span>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div>
+       <label class="block mb-2" for="detailsInput">
+        Additional Details (Optional)
+        <span class="help-icon">
+         i
+         <div class="help-tooltip">
+          Provide any extra context, constraints, or examples.
+         </div>
+        </span>
+       </label>
+       <textarea class="w-full p-3 border rounded-lg" id="detailsInput" rows="3"></textarea>
+      </div>
+      <!-- TONE SELECTION -->
+      <div>
+       <label class="block mb-2">
+        Tone
+       </label>
+       <div class="grid grid-cols-3 gap-2" id="toneOptions">
+        <label class="inline-flex items-center">
+         <input checked="" class="mr-2" name="text-tone" type="radio" value="Neutral"/>
+         Neutral
+        </label>
+        <label class="inline-flex items-center">
+         <input class="mr-2" name="text-tone" type="radio" value="Formal"/>
+         Formal
+        </label>
+        <label class="inline-flex items-center">
+         <input class="mr-2" name="text-tone" type="radio" value="Professional"/>
+         Professional
+        </label>
+        <label class="inline-flex items-center">
+         <input class="mr-2" name="text-tone" type="radio" value="Analytical"/>
+         Analytical
+        </label>
+       </div>
+      </div>
+      <!-- OUTPUT FORMAT SELECTION -->
+      <div>
+       <label class="block mb-2">
+        Output Format
+       </label>
+       <div class="grid grid-cols-3 gap-2" id="outputFormatSelect">
+        <label class="inline-flex items-center">
+         <input checked="" class="mr-2" name="text-format" type="radio" value="Plain Text"/>
+         Plain Text
+        </label>
+        <label class="inline-flex items-center">
+         <input class="mr-2" name="text-format" type="radio" value="Markdown"/>
+         Markdown
+        </label>
+        <label class="inline-flex items-center">
+         <input class="mr-2" name="text-format" type="radio" value="JSON"/>
+         JSON
+        </label>
+        <label class="inline-flex items-center">
+         <input class="mr-2" name="text-format" type="radio" value="Bullet points"/>
+         Bullet points
+        </label>
+       </div>
+      </div>
+      <!-- LENGTH CONTROL -->
+      <div>
+       <label class="block mb-2" for="text-length">
+        Length
+       </label>
+       <div class="flex items-center">
+        <span class="mr-3">
+         Brief
+        </span>
+        <input class="slider flex-grow" id="text-length" max="5" min="1" oninput="updateLengthDisplay();" type="range" value="3"/>
+        <span class="ml-3">
+         Detailed
+        </span>
+       </div>
+       <div class="text-center mt-1" id="text-length-display" style="color: var(--text-secondary);">
+        Medium
+       </div>
+      </div>
+      <!-- ADVANCED OPTIONS -->
+      <div>
+       <div class="flex justify-between items-center cursor-pointer mb-2" onclick="toggleAdvancedOptions()">
+        <label class="block">
+         Advanced Options
+         <span class="help-icon">
+          i
+          <div class="help-tooltip">
+           These are API parameters, not part of the prompt text.
+          </div>
+         </span>
+        </label>
+        <span class="transform transition-transform duration-300" id="advanced-toggle-icon">
+         ▼
+        </span>
+       </div>
+       <div class="space-y-4 hidden" id="advanced-options-content">
+        <div>
+         <label class="block text-sm mb-1">
+          Temperature (Creativity)
+         </label>
+         <div class="flex items-center space-x-2">
+          <input class="slider flex-grow" id="temperature" max="100" min="0" oninput="updateTemperatureDisplay();" type="range" value="70"/>
+          <span class="text-sm w-16 text-right" id="temperature-display">
+           0.70
+          </span>
+         </div>
+        </div>
+        <div class="emoji-toggle-wrapper">
+         <label class="flex items-center cursor-pointer">
+          <div class="emoji-toggle-container" id="emoji-toggle-container">
+           <input class="sr-only emoji-toggle-input" id="emoji-toggle" type="checkbox"/>
+           <div class="emoji-toggle-track">
+            <div class="emoji-toggle-thumb">
+            </div>
+           </div>
+          </div>
+          <span class="ml-3 text-sm font-medium">
+           Use Emojis
+          </span>
+         </label>
+         <span class="emoji-status" id="emoji-status">
+          Emojis: Off
+         </span>
+        </div>
+       </div>
+      </div>
+      <!-- Other Checkboxes -->
+      <div class="border-t pt-4 mt-4" style="border-color: var(--border-color);">
+       <label class="inline-flex items-center">
+        <input class="mr-2" id="useRAG" type="checkbox"/>
+        Use external knowledge retrieval (RAG)
+       </label>
+      </div>
+      <!-- Language Selector -->
+      <div>
+       <label class="block mb-2" for="text-language-selector">
+        Output Language
+       </label>
+       <select class="w-full p-3 border rounded-lg" id="text-language-selector">
+        <option selected="" value="English">
+         English
+        </option>
+        <option value="German">
+         German
+        </option>
+        <option value="Spanish">
+         Spanish
+        </option>
+        <option value="French">
+         French
+        </option>
+       </select>
+      </div>
+     </div>
+     <!-- IMAGE GENERATION FORM (Simplified) -->
+     <div class="prompt-type" id="image-form">
+      <h4 class="text-xl font-semibold mb-4">
+       Image Generation Prompt
+      </h4>
+      <div class="space-y-4">
+       <div>
+        <label class="block mb-2" for="image-subject">
+         Main Subject
+        </label>
+        <input class="w-full p-3 border rounded-lg" id="image-subject" placeholder="e.g., A majestic lion in a futuristic city" type="text"/>
+       </div>
+       <div>
+        <label class="block mb-2" for="image-style">
+         Visual Style
+        </label>
+        <select class="w-full p-3 border rounded-lg" id="image-style">
+         <option value="Realistic photography">
+          Realistic photography
+         </option>
+         <option value="Digital art">
+          Digital art
+         </option>
+         <option value="3D render">
+          3D render
+         </option>
+        </select>
+       </div>
+      </div>
+     </div>
+     <!-- VIDEO GENERATION FORM (Simplified) -->
+     <div class="prompt-type" id="video-form">
+      <h4 class="text-xl font-semibold mb-4">
+       Video Generation Prompt
+      </h4>
+      <div class="space-y-4">
+       <div>
+        <label class="block mb-2" for="video-scene">
+         Main Scene Description
+        </label>
+        <textarea class="w-full p-3 border rounded-lg" id="video-scene" placeholder="e.g., A panoramic drone shot flying over a serene mountain lake at sunrise" rows="3"></textarea>
+       </div>
+      </div>
+     </div>
+     <!-- GENERATE BUTTON -->
+     <div class="mt-6">
+      <button class="w-full py-3 px-6 text-white font-semibold rounded-lg shadow-md btn-purple" id="generateButton">
+       Generate Prompt
+      </button>
+     </div>
+    </div>
+    <!-- GENERATED PROMPT SECTION -->
+    <div class="bg-container rounded-lg shadow-md p-6 mt-8">
+     <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold">
+       Generated Prompt
+      </h3>
+      <button class="py-2 px-4 font-medium rounded-lg flex items-center" id="save-favorite" style="background-color: var(--bg-primary); color: var(--text-primary);">
+       <i class="far fa-star mr-2">
+       </i>
+       Save
+      </button>
+     </div>
+     <div class="p-4 rounded-lg mb-4 min-h-[150px]" id="generatedPrompt" style="background-color: var(--bg-primary);">
+      <p class="italic" style="color: var(--text-secondary);">
+       Your generated prompt will appear here...
+      </p>
+     </div>
+     <button class="py-2 px-4 font-medium rounded-lg flex items-center mt-4" id="copy-button" style="background-color: var(--bg-primary); color: var(--text-primary);">
+      <i class="far fa-copy mr-2">
+      </i>
+      Copy
+     </button>
+     <!-- FAVORITES SECTION -->
+     <div class="mt-6 pt-4 border-t hidden" id="favorites-section" style="border-color: var(--border-color);">
+      <div class="flex justify-between items-center mb-3">
+       <h4 class="text-lg font-semibold">
+        Saved Prompts
+       </h4>
+       <button class="py-1 px-3 text-sm font-medium rounded-lg" id="clear-favorites" onclick="clearAllFavorites();" style="background-color: var(--bg-primary); color: var(--text-primary);">
+        <i class="far fa-trash-alt mr-1">
+        </i>
+        Clear All
+       </button>
+      </div>
+      <div class="space-y-3 max-h-80 overflow-y-auto" id="favorites-list">
+      </div>
+     </div>
+     <!-- RATING SECTION -->
+     <div class="mt-8 border-t pt-4" style="border-color: var(--border-color);">
+      <p class="mb-2" id="rating-title">
+       Rate this tool:
+      </p>
+      <div class="rating-stars" id="rating-stars-container">
+       <i class="rating-star interactive far fa-star" data-value="1">
+       </i>
+       <i class="rating-star interactive far fa-star" data-value="2">
+       </i>
+       <i class="rating-star interactive far fa-star" data-value="3">
+       </i>
+       <i class="rating-star interactive far fa-star" data-value="4">
+       </i>
+       <i class="rating-star interactive far fa-star" data-value="5">
+       </i>
+      </div>
+      <div class="rating-message" id="rating-feedback">
+      </div>
+     </div>
+    </div>
+    <!-- ... (Rest of the main content like FAQ, About, etc. can be placed here) ... -->
+   </div>
+  </main>
+  <!-- Footer -->
+  <footer class="bg-container rounded-lg shadow-md p-8 mt-12">
+   <div class="text-center">
+    <p style="color: var(--text-secondary);">
+     Copyright @2025 - Thomas Willner
+    </p>
+    <div class="flex justify-center mt-4 space-x-4">
+     <a class="hover:text-indigo-700" href="https://www.linkedin.com/in/thomaswillner/" rel="noopener noreferrer" target="_blank" title="LinkedIn Profile">
+      <i class="fab fa-linkedin-in">
+      </i>
+     </a>
+    </div>
+   </div>
+  </footer>
+ </div>
+ <!-- SCRIPT BLOCKS -->
+ <script>
+  // ============================================================ // PROMPT GENERATION LOGIC // ============================================================ function handleGenerateClick(e) { if (e) e.preventDefault(); try { let promptText = ''; const activeForm = getActiveForm(); switch (activeForm) { case 'text': promptText = generateTextPrompt(); break; case 'image': promptText = `Image prompt: A ${document.getElementById('image-style').value} of a ${document.getElementById('image-subject').value}.`; break; case 'video': promptText = `Video prompt: ${document.getElementById('video-scene').value}.`; break; } const outputElement = document.getElementById('generatedPrompt'); if (outputElement) { outputElement.innerText = promptText; outputElement.classList.add('new-prompt'); setTimeout(() => outputElement.classList.remove('new-prompt'), 500); } } catch (error) { console.error('Error generating prompt:', error); alert(error.message || 'Please fill in all required fields.'); } } function generateTextPrompt() { // Get form inputs const role = (document.getElementById('roleInput')?.value.trim()) || 'General Assistant'; const task = document.getElementById('taskInput')?.value.trim(); const topic = document.getElementById('topicInput')?.value.trim(); const format = document.querySelector('input[name="text-format"]:checked')?.value; const tone = document.querySelector('input[name="text-tone"]:checked')?.value; const techniqueSelect = document.getElementById('promptingTechnique'); const selectedTechniques = Array.from(techniqueSelect?.selectedOptions || []).map(opt => opt.value); const language = document.getElementById('text-language-selector')?.value || 'English'; const length = document.getElementById('text-length')?.value || '3'; const useEmojis = document.getElementById('emoji-toggle')?.checked || false; const additionalDetails = document.getElementById('detailsInput')?.value.trim(); const useRAGCheckbox = document.getElementById('useRAG')?.checked; // Validate required fields if (!topic) throw new Error('Topic is required'); if (!task) throw new Error('Task is required'); if (!format) throw new Error('Please select a format'); if (!tone) throw new Error('Please select a tone'); const addEmoji = (text, emojiChar) => useEmojis ? `${emojiChar} ${text}` : text; const systemSection = `<s> SYSTEM: You are an expert assistant acting as **${role}**. Your response must adhere to these core parameters: • ${addEmoji('Format:', '📝')} **${format}** • ${addEmoji('Tone:', '🎭')} **${tone}** • ${addEmoji('Detail Level:', '📊')} **${getLengthDescription(length)}** • ${addEmoji('Language:', '🌐')} **${language}** </s>`; // Detect if the advanced combination (RAG + ToT + CoT) is selected const hasRAG = selectedTechniques.includes('Retrieval-Augmented Generation') || useRAGCheckbox; const hasToT = selectedTechniques.includes('Tree-of-Thought Prompting'); const hasCoT = selectedTechniques.includes('Chain-of-Thought (CoT) Prompting'); let promptBody = ''; if (hasRAG && hasToT && hasCoT) { promptBody = `<methodology> You will follow a multi-stage reasoning process combining Retrieval-Augmented Generation (RAG), Tree-of-Thought (ToT), and Chain-of-Thought (CoT). **Phase 1: Retrieval & Context Gathering (RAG)** 1. Deconstruct the user's TASK to identify key entities, questions, and concepts. 2. Perform a comprehensive search on external knowledge sources for the most relevant, up-to-date, and factual information regarding the TOPIC: "${topic}". 3. Synthesize the retrieved information into a concise "Context Brief" containing key facts, figures, and definitions. **Phase 2: Exploration & Evaluation (Tree-of-Thought)** 1. Based on the "Context Brief", generate at least three distinct and viable solution paths or conceptual branches to address the TASK. 2. For each branch, outline the core idea, key steps, potential pros, and cons. 3. Evaluate all branches against the user's requirements (objective, tone, format). Select the single most promising branch and state your justification for this choice. **Phase 3: Structured Generation (Chain-of-Thought)** 1. Develop the full response based on the selected branch from Phase 2. 2. **Use a Chain-of-Thought process:** Explicitly break down your reasoning step-by-step as you construct the final answer. Show your work. 3. **Synthesize:** Ensure each step logically follows the previous one, integrating facts from the "Context Brief" (Phase 1) and the direction from the chosen "Thought Branch" (Phase 2). 4. **Final Review:** Perform a final check for accuracy, clarity, and adherence to all prompt parameters before presenting the final output. </methodology>`; } else { if (selectedTechniques.length > 0) { const techniquesList = selectedTechniques.map(tech => `• ${tech}`).join('\n'); promptBody = `<methodology> You will approach this task by applying the following techniques: ${techniquesList} Ensure the final output is accurate, clear, and comprehensive, strictly adhering to the specified format and tone. </methodology>`; } } const userSection = `<user> TASK: • **Objective:** ${task} • **Topic:** ${topic}${additionalDetails ? `\n• **Additional Context:**\n${additionalDetails.split('\n').map(line => ` - ${line}`).join('\n')}` : ''} </user>`; return [systemSection, promptBody, userSection].filter(Boolean).join('\n\n').trim(); } function getLengthDescription(lengthValue) { const lengths = { '1': 'Very Brief', '2': 'Brief', '3': 'Medium', '4': 'Detailed', '5': 'Very Detailed' }; return lengths[lengthValue] || 'Medium'; }
+ </script>
+ <script>
+  // ============================================================ // UI & EVENT LISTENERS // ============================================================ function switchTab(type) { document.querySelectorAll('.tab-container button').forEach(tab => tab.classList.remove('tab-active')); document.querySelectorAll('.prompt-type').forEach(form => form.classList.remove('active')); document.getElementById(`${type}-tab`).classList.add('tab-active'); document.getElementById(`${type}-form`).classList.add('active'); } function getActiveForm() { const activeTab = document.querySelector('.tab-active'); return activeTab ? activeTab.id.replace('-tab', '') : 'text'; } function toggleTheme() { const html = document.documentElement; const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; html.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); } function closeTechniqueGuide() { const modal = document.getElementById('technique-guide-modal'); if(modal) modal.classList.add('hidden'); } function updateRoleInput() { const select = document.getElementById('domainRoleSelect'); const input = document.getElementById('roleInput'); if (select && input && select.value) { input.value = select.value; } } function copyToClipboard() { const promptText = document.getElementById('generatedPrompt').innerText; if (promptText && promptText !== 'Your generated prompt will appear here...') { navigator.clipboard.writeText(promptText).then(() => { const copyButton = document.getElementById('copy-button'); const originalText = copyButton.innerHTML; copyButton.innerHTML = '<i class="far fa-check-circle mr-2"></i>Copied!'; copyButton.classList.add('copy-success'); setTimeout(() => { copyButton.innerHTML = originalText; copyButton.classList.remove('copy-success'); }, 2000); }).catch(err => console.error('Failed to copy text: ', err)); } } document.addEventListener('DOMContentLoaded', function() { const savedTheme = localStorage.getItem('theme') || 'light'; document.documentElement.setAttribute('data-theme', savedTheme); const generateButton = document.getElementById('generateButton'); if (generateButton) { generateButton.addEventListener('click', (e) => { e.preventDefault(); const taskInputEl = document.getElementById('taskInput'); const topicInputEl = document.getElementById('topicInput'); const taskError = document.getElementById('task-error'); const topicError = document.getElementById('topic-error'); let isValid = true; if (taskInputEl.value.trim() === '') { taskInputEl.classList.add('input-error'); taskError.classList.add('visible'); isValid = false; } else { taskInputEl.classList.remove('input-error'); taskError.classList.remove('visible'); } if (topicInputEl.value.trim() === '') { topicInputEl.classList.add('input-error'); topicError.classList.add('visible'); isValid = false; } else { topicInputEl.classList.remove('input-error'); topicError.classList.remove('visible'); } if(isValid) handleGenerateClick(e); }); } const copyButton = document.getElementById('copy-button'); if(copyButton) copyButton.addEventListener('click', copyToClipboard); const saveButton = document.getElementById('save-favorite'); if(saveButton) saveButton.addEventListener('click', () => { const promptText = document.getElementById('generatedPrompt').innerText; if (promptText && promptText !== 'Your generated prompt will appear here...') { savePrompt(); } else { alert("Please generate a prompt before saving."); } }); document.querySelectorAll('.ai-techniques-header').forEach(header => { const content = document.getElementById(header.getAttribute('aria-controls')); const status = header.querySelector('.expansion-status'); if(!content) return; content.style.display = 'none'; header.addEventListener('click', () => { const isExpanded = header.getAttribute('aria-expanded') === 'true'; header.setAttribute('aria-expanded', !isExpanded); content.style.display = isExpanded ? 'none' : 'block'; if(status) status.textContent = isExpanded ? '(Click to expand)' : '(Click to collapse)'; }); }); });
+ </script>
+ <script>
+  // ============================================================ // FAVORITES & STORAGE MANAGEMENT // ============================================================ function clearAllFavorites() { if (confirm('Are you sure you want to clear all saved prompts? This cannot be undone.')) { localStorage.removeItem('favorites'); loadFavorites(); } } function savePrompt() { try { const promptText = document.getElementById('generatedPrompt').innerText; const formState = { role: document.getElementById('roleInput').value, task: document.getElementById('taskInput').value, topic: document.getElementById('topicInput').value, format: document.querySelector('input[name="text-format"]:checked').value, tone: document.querySelector('input[name="text-tone"]:checked').value, techniques: Array.from(document.getElementById('promptingTechnique').selectedOptions).map(opt => opt.value), language: document.getElementById('text-language-selector').value, length: document.getElementById('text-length').value }; const promptObject = { id: Date.now(), timestamp: new Date().toISOString(), prompt: promptText, formState }; const favorites = JSON.parse(localStorage.getItem('favorites') || '[]'); favorites.unshift(promptObject); // Add to the top localStorage.setItem('favorites', JSON.stringify(favorites)); loadFavorites(); } catch (error) { console.error('Error saving prompt:', error); alert('Failed to save prompt.'); } } function loadFavorites() { const favorites = JSON.parse(localStorage.getItem('favorites') || '[]'); updateFavoritesList(favorites); const favoritesSection = document.getElementById('favorites-section'); if (favoritesSection) { favoritesSection.classList.toggle('hidden', favorites.length === 0); } } function updateFavoritesList(favorites) { const favoritesList = document.getElementById('favorites-list'); if (!favoritesList) return; favoritesList.innerHTML = ''; favorites.forEach(favorite => { const item = document.createElement('div'); item.className = 'favorite-item p-3 rounded-lg flex justify-between items-center'; item.style.backgroundColor = 'var(--bg-primary)'; const previewText = favorite.prompt.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 100); item.innerHTML = ` <div class="flex-grow cursor-pointer" onclick="loadFavorite(${favorite.id})"> <div class="text-sm font-medium" style="color: var(--text-primary);">${previewText}...</div> <div class="text-xs" style="color: var(--text-secondary);">${new Date(favorite.timestamp).toLocaleString()}</div> </div> <div class="flex-shrink-0 flex space-x-2 ml-4"> <button onclick="copyFavorite(${favorite.id})" title="Copy Prompt" class="text-sm hover:text-indigo-600"><i class="far fa-copy"></i></button> <button onclick="deleteFavorite(${favorite.id})" title="Delete Prompt" class="text-sm hover:text-red-600"><i class="far fa-trash-alt"></i></button> </div>`; favoritesList.appendChild(item); }); } function copyFavorite(id) { const favorites = JSON.parse(localStorage.getItem('favorites') || '[]'); const favorite = favorites.find(f => f.id === id); if (favorite) navigator.clipboard.writeText(favorite.prompt).then(() => alert('Prompt copied!')); } function loadFavorite(id) { const favorites = JSON.parse(localStorage.getItem('favorites') || '[]'); const favorite = favorites.find(f => f.id === id); if (favorite && favorite.formState) { // Restore form state document.getElementById('roleInput').value = favorite.formState.role; document.getElementById('taskInput').value = favorite.formState.task; document.getElementById('topicInput').value = favorite.formState.topic; document.querySelector(`input[name="text-format"][value="${favorite.formState.format}"]`).checked = true; document.querySelector(`input[name="text-tone"][value="${favorite.formState.tone}"]`).checked = true; const techSelect = document.getElementById('promptingTechnique'); Array.from(techSelect.options).forEach(opt => opt.selected = favorite.formState.techniques.includes(opt.value)); document.getElementById('text-language-selector').value = favorite.formState.language; document.getElementById('text-length').value = favorite.formState.length; updateLengthDisplay(); // Update generated prompt display document.getElementById('generatedPrompt').innerText = favorite.prompt; } } function deleteFavorite(id) { if (confirm('Delete this saved prompt?')) { let favorites = JSON.parse(localStorage.getItem('favorites') || '[]'); favorites = favorites.filter(f => f.id !== id); localStorage.setItem('favorites', JSON.stringify(favorites)); loadFavorites(); } } document.addEventListener('DOMContentLoaded', loadFavorites);
+ </script>
+ <script>
+  // ============================================================ // SLIDERS & RATING SYSTEM // ============================================================ function updateLengthDisplay() { const slider = document.getElementById('text-length'); const display = document.getElementById('text-length-display'); if(!slider || !display) return; const lengths = ['Very Brief', 'Brief', 'Medium', 'Detailed', 'Very Detailed']; display.textContent = lengths[slider.value - 1] || 'Medium'; localStorage.setItem('textLength', slider.value); } function updateTemperatureDisplay() { const slider = document.getElementById('temperature'); const display = document.getElementById('temperature-display'); if(slider && display) { display.textContent = (slider.value / 100).toFixed(2); localStorage.setItem('temperature', slider.value); } } // Rating system function initializeRatingSystem() { const container = document.getElementById('rating-stars-container'); if (!container) return; const stars = container.querySelectorAll('.rating-star'); const savedRating = localStorage.getItem('toolRating'); if (savedRating) { fillStars(parseInt(savedRating)); container.classList.add('rated'); } stars.forEach(star => { star.addEventListener('click', () => { if (container.classList.contains('rated')) return; const rating = parseInt(star.dataset.value); localStorage.setItem('toolRating', rating); fillStars(rating); container.classList.add('rated'); }); star.addEventListener('mouseenter', () => { if (container.classList.contains('rated')) return; fillStars(parseInt(star.dataset.value)); }); }); container.addEventListener('mouseleave', () => { if (container.classList.contains('rated')) return; const currentRating = localStorage.getItem('toolRating'); fillStars(currentRating ? parseInt(currentRating) : 0); }); } function fillStars(rating) { document.querySelectorAll('.rating-star').forEach(star => { if(star.dataset.value <= rating) { star.classList.add('fas', 'filled'); star.classList.remove('far', 'empty'); } else { star.classList.add('far', 'empty'); star.classList.remove('fas', 'filled'); } }); } document.addEventListener('DOMContentLoaded', () => { const sliders = { 'text-length': 'textLength', 'temperature': 'temperature' }; Object.entries(sliders).forEach(([id, key]) => { const slider = document.getElementById(id); const saved = localStorage.getItem(key); if (slider && saved) slider.value = saved; }); updateLengthDisplay(); updateTemperatureDisplay(); initializeRatingSystem(); });
+ </script>
+</body>
+</html>
